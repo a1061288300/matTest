@@ -12,6 +12,56 @@ using namespace std;
 using namespace cv;
 
 
+/*
+void smooth(Mat& image)
+{
+	int nl = image.rows;
+	int nc = image.cols * image.channels();
+	for (int i = 1; i < nl - 1; i++)
+	{
+		uchar* data_up = image.ptr<uchar>(i - 1);
+		uchar* data = image.ptr<uchar>(i);
+		uchar* data_down = image.ptr<uchar>(i + 1);
+		for (int j = 1; j < nc - 1; j++)
+		{
+			if (data_up[j] != data[j] && data_down[j] != data[j])
+			{
+				data[j] = 255 - (int)data_up[j];
+			}
+			else if (data[j - 1] != data[j] && data[j + 1] != data[j])
+			{
+				data[j] = 255 - (int)data[j-1];
+			}
+		}
+	}
+}
+*/
+
+int getEmptyLine(Mat& image)//获取图像中空的行数
+{
+	int nl = image.rows;
+	int nc = image.cols * image.channels();
+	int n = 0;
+
+
+	for (int i = 0; i < nl; i++)
+	{
+		int tmpn = 0;
+		int flag = 0;
+		uchar* data = image.ptr<uchar>(i);
+		for (int j = 0; j < nc; j++)
+		{
+			if (data[j] == 0)
+			{
+				flag = 1;
+				break;
+			}
+		}
+		if (!flag)
+			n++;
+	}
+	return n;
+}
 
 vector<Point> getPoints(Mat& image)
 {
@@ -45,7 +95,7 @@ double getLine(Mat& image)
 	return angle;
 }
 
-void imageRotat(Mat& imgIn, string nameStr)
+Mat imageRotat(Mat& imgIn, string nameStr)
 {
 	Mat imgOut;
 	double angle = getLine(imgIn);
@@ -55,46 +105,48 @@ void imageRotat(Mat& imgIn, string nameStr)
 	cout << imgIn.channels() << endl;
 	Point center = Point(imgIn.cols / 2, imgIn.rows / 2);
 	Mat rot_mat(2, 3, CV_32FC1);
-	rot_mat = getRotationMatrix2D(center, angle, 1.0);//角度不理想，先设为0；
+	
+	//rot_mat = getRotationMatrix2D(center, angle, 1.0);//角度不理想，先设为0；
+	int emptyLineArr[30] = { 0 };
+	int tmp = 0;
+	for (float i = -3.0f; i <= 3.0f; i += 0.25f)
+	{
+		rot_mat = getRotationMatrix2D(center, i * 3.1415926 / 180.0f, 1.0);
+		warpAffine(imgIn, imgOut, rot_mat, imgIn.size(), 1, 0, Scalar(255));
+		emptyLineArr[tmp] = getEmptyLine(imgOut);
+		tmp++;
+	}
 
-	cout << angle / 38.0 << endl;
+	int lineMax = 0;
+	int flagAngle = 0;
+	for (int i = 0; i < tmp; i++)
+	{
+		//cout << emptyLineArr[i] << endl;
+		if (emptyLineArr[i] >= lineMax)
+		{
+			lineMax = emptyLineArr[i];
+			flagAngle = i;
+		}
+	}
+
+	float finAngle = -3.0f + 0.25f * flagAngle;
+	cout << finAngle << endl;
+	rot_mat = getRotationMatrix2D(center, finAngle, 1.0);
 	warpAffine(imgIn ,imgOut, rot_mat, imgIn.size(), 1, 0, Scalar(255));
 
 
 	imshow("sss", imgIn);
 	imshow("rotatPic", imgOut);
 	char* add_str = "rotat.jpg";
-	string res = getPicName(nameStr, add_str, 12);
-	//imwrite(res, imgOut);
+	string res = getPicName(nameStr, add_str, 4);
+	cout << res << endl;
+	imwrite(res, imgOut);
 	waitKey(0);
-	//cout << res << endl;
+
+	return imgOut;
 }
 
-int getEmptyLine(Mat& image)//获取图像中空的行数
-{
-	int nl = image.rows;
-	int nc = image.cols * image.channels();
-	int n = 0;
 
-	
-	for (int i = 0; i < nl; i++)
-	{
-		int tmpn = 0;
-		int flag = 0;
-		uchar* data = image.ptr<uchar>(i);
-		for (int j = 0; j < nc; j++)
-		{
-			if (data[j] == 0)
-			{
-				flag = 1;
-				break;
-			}
-		}
-		if (!flag)
-			n++;
-	}
-	return n;
-}
 
 Mat imgRotatTwo(Mat& src, float angle)
 {
@@ -191,6 +243,7 @@ Mat getBestAngleImg(Mat& img, string nameStr)
 
 	float finAngle = -3.0f + 0.25f * flagAngle;
 	tmpImg = imgRotatTwo(img, finAngle * 3.1415926 / 180.0f);
+	//smooth(tmpImg);
 	//cout << flagAngle << " " << lineMax << endl;
 	//imshow("roat", tmpImg);
 	//waitKey(0);

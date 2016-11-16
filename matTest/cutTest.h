@@ -51,14 +51,19 @@ void union_label1(int x, int y, int parent[])
 	}
 }
 
-Mat unicom_area(Mat& binary)//求连通图
+Mat splitImg(Mat& binary)
 {
-	Mat label;
-
 	Mat imageSplit;
 	vector<Mat> channel;
 	split(binary, channel);
 	imageSplit = channel.at(0);
+
+	return imageSplit;
+}
+
+Mat unicom_area(Mat& imageSplit)//求连通图
+{
+	Mat label;
 
 	label.create(imageSplit.size(), imageSplit.type());
 	imageSplit.convertTo(label, CV_32SC1);
@@ -143,7 +148,7 @@ Mat unicom_area(Mat& binary)//求连通图
 
 	//std::cout << "unicom_area down!" << endl;
 
-	return imageSplit;
+	return label;
 	
 }
 
@@ -209,7 +214,7 @@ void getHorizonCutLineNum(Mat& image)//获取水平分割线
 	//std::cout << "getHorizonCutLineNum down!" << endl;
 }
 
-void getVerticalCutLineNum(Mat& image, int line_up, int line_down)//获取竖直分割线
+void getVerticalCutLineNum(Mat& image, Mat& label, int line_up, int line_down)//获取竖直分割线
 {
 	for (int i = 0; i < 100; i++)
 		gVerticalCutNum[i] = 0;
@@ -217,20 +222,31 @@ void getVerticalCutLineNum(Mat& image, int line_up, int line_down)//获取竖直分割
 	int tmpNum = 0;
 	int nc = image.cols * image.channels();
 
+	
+	int markArr[900] = { 0 };//标记数组，用来标记该列是否有超过一个联通标记的值 得到数组后遍历  如果值大于99999 则说明该列有至少两个不同联通区域的点
 	for (int i = line_up; i <= line_down; i++)
 	{
+		int* mark = label.ptr<int>(i);
 		uchar* data = image.ptr<uchar>(i);
 		for (int j = 1; j < nc - 1; j++)
 		{
 			if (data[j] == 0)
+			{
 				pixelNum[j]++;
+				if (markArr[j] == 0)
+				{
+					markArr[j] = mark[j];
+				}
+			}
 		}
 	}
 
 
-
 	for (int j = 1; j < nc - 1; j++)
 	{
+		if (pixelNum[j] == 1)
+			markArr[j] = 0;
+
 		if (pixelNum[j] > 1 && pixelNum[j - 1] <= 1)
 		{
 			gVerticalCutNum[tmpNum] = j;
@@ -243,12 +259,22 @@ void getVerticalCutLineNum(Mat& image, int line_up, int line_down)//获取竖直分割
 			//cout << "right:" << gVerticalCutNum[tmpNum] << endl;
 			tmpNum++;
 		}
+
+		/*if (markArr[j - 1] != markArr[j] && markArr[j - 1] != 0 && markArr[j] != 0)
+		{
+			gVerticalCutNum[tmpNum] = j - 1;
+			//cout << "right:" << j << endl;
+			tmpNum++;
+			gVerticalCutNum[tmpNum] = j;
+			//cout << "left:" << j << endl;
+			tmpNum++;
+		}*/
 	}
 
 	//std::cout << "getVerticalCutLineNum" << endl;
 }
 
-wordImformation* initWord(Mat& image, wordImformation words[])//对words赋值
+wordImformation* initWord(Mat& image, Mat& label, wordImformation words[])//对words赋值
 {
 	getHorizonCutLineNum(image);
 
@@ -263,7 +289,7 @@ wordImformation* initWord(Mat& image, wordImformation words[])//对words赋值
 			line_up = gHorizonCutNum[i];
 			i++;
 			line_down = gHorizonCutNum[i];
-			getVerticalCutLineNum(image, line_up, line_down);
+			getVerticalCutLineNum(image, label, line_up, line_down);
 			
 			for (int j = 0; gVerticalCutNum[j] != 0; j++)
 			{
@@ -278,10 +304,7 @@ wordImformation* initWord(Mat& image, wordImformation words[])//对words赋值
 					words[wordsNum].line_num = (line_up + 2) / 2;
 
 					//以下对字符进行压缩
-					if (wordsNum == 87)
-					{
-						//cout << words[wordsNum].up_line << " " << words[wordsNum].down_line << " " << words[wordsNum].left_line << " " << words[wordsNum].right_line << endl;
-					}
+					
 
 					int tmp_horizon_up = 0;
 					int tmp_horizon_down = 0;
@@ -326,7 +349,7 @@ wordImformation* initWord(Mat& image, wordImformation words[])//对words赋值
 					words[wordsNum].widthPixel = words[wordsNum].right_line - words[wordsNum].left_line;
 					words[wordsNum].heightPixel = words[wordsNum].down_line - words[wordsNum].up_line;
 					words[wordsNum].whScale = (double)words[wordsNum].widthPixel / (double)words[wordsNum].heightPixel;
-
+					//cout << wordsNum << " " << words[wordsNum].up_line << "\t" << words[wordsNum].down_line << "\t" << words[wordsNum].left_line << "\t" << words[wordsNum].right_line << endl;
 					//cout << wordsNum << " " << endl;
 					//if (wordsNum == 0);
 					//else
@@ -403,17 +426,17 @@ wordImformation* initWord(Mat& image, wordImformation words[])//对words赋值
 
 wordImformation* getWordImformation(Mat& image, wordImformation words[])//注意要将连通之后的那张图传进来：label
 {
+	Mat split = splitImg(image);
 	Mat label = unicom_area(image);
 	//imshow("label", label);
 	//getPixelTxt(label);
-	initWord(label, words);
-	/*for (int i = 0; i < wordsNum; i++)
+	initWord(split, label, words);
+	for (int i = 0; i < wordsNum; i++)
 	{
 		//std::cout << i << endl;
 		//std::cout << "up_line:" << words[i].up_line << "\t" << "down_line:" << words[i].down_line << endl;
 		//std::cout << "left_line:" << words[i].left_line << "\t" << "right_line" << words[i].right_line << endl;
 		//std::cout << endl;
-
 
 
 		for (int p = words[i].up_line; p <= words[i].down_line; p++)
@@ -429,9 +452,10 @@ wordImformation* getWordImformation(Mat& image, wordImformation words[])//注意要
 					data[q] = 0;
 			}
 		}
-	}*/
-	//imshow("sds", image);
-	//waitKey(0);
+	}
+	imshow("sds", image);
+	waitKey(0);
+	imwrite("E:\\graduationDesign\\image\\275\\275markmark.jpg", image);
 	//std::cout << "getWordImformation down!" << endl;
 	return words;
 }

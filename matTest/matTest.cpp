@@ -56,7 +56,6 @@ int main()
 	wordImformation words[1000];
 	getWordImformation(imageRead6, words);
 	
-
 	for (int k = 0; k < wordsNum; k++)//将分割出来的字符以50 * 50的01矩阵存在txt中
 	{
 		string preName = "E:\\graduationDesign\\image\\275\\";
@@ -77,6 +76,7 @@ int main()
 		reverse(pretmp.begin(), pretmp.end());
 		string endName = ".txt";
 		string name = preName + pretmp + endName;
+		//cout << "start" << endl;
 		getMatchWordTxt(imageRead6, words[k].up_line, words[k].down_line, words[k].left_line, words[k].right_line, name);
 	}
 
@@ -153,7 +153,7 @@ int main()
 				break;
 			}
 		}
-		cout << preinf.first << "\t" << preinf.second << "\t" << prewh.second << endl;
+		cout << i << "\t" << preinf.first << "\t" << preinf.second << "\t" << prewh.second << endl;
 		//int tt = 0;
 		//for (auto w : imfVec)
 		//{
