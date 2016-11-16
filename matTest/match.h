@@ -80,7 +80,7 @@ int getNorNumber(string ss)//获取以XXnor.txt文件名nor前面的数字
 	while (tmps[len] - '0' >= 0 && tmps[len] - '0' <= 9)
 	{
 		len--;
-	}
+	};
 	int num = 0;
 	len++;
 	while (tmps[len] - '0' >= 0 && tmps[len] - '0' <= 9)

@@ -228,14 +228,6 @@ void getVerticalCutLineNum(Mat& image, int line_up, int line_down)//获取竖直分割
 	}
 
 
-	/*cout << line_up << "  " << line_down << endl;
-	for (int i = 1; i < 300; i++)
-	{
-		cout << i << ":" << pixelNum[i] << "\t";
-		if (i % 10 == 0)
-			cout << endl;
-	}
-	cout << endl;*/
 
 	for (int j = 1; j < nc - 1; j++)
 	{
@@ -412,6 +404,7 @@ wordImformation* initWord(Mat& image, wordImformation words[])//对words赋值
 wordImformation* getWordImformation(Mat& image, wordImformation words[])//注意要将连通之后的那张图传进来：label
 {
 	Mat label = unicom_area(image);
+	//imshow("label", label);
 	//getPixelTxt(label);
 	initWord(label, words);
 	/*for (int i = 0; i < wordsNum; i++)
