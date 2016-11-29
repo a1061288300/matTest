@@ -18,12 +18,12 @@ Mat GrayIma(Mat& imageRead, string nameStr)
 	for (int i = 0; i < nl; i++)
 	{
 		uchar* data = imageRead.ptr<uchar>(i);
-		for (int j = 0; j < nc; j++)
+		for (int j = 0; j < nc; j += 3)
 		{
-			if (j % 3 == 0)
 				data[j] = data[j] * 0.11 + data[j + 1] * 0.59 + data[j + 2] * 0.3;
-			else
-				data[j] = data[j - j % 3];
+				data[j + 1] = data[j];
+				data[j + 2] = data[j];
+				//data[j] = data[j - j % 3];
 		}
 	}
 

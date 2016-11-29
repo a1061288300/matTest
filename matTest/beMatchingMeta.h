@@ -11,7 +11,6 @@ using namespace cv;
 void getMatchWordTxt(Mat& img, int up, int down, int left, int right, string nameStr)//将待匹配区域以50*50的方式存在txt
 {
 	Mat dst;
-	//cout << up << " " << down << " " << left << " " << right << endl;
 	rect = Rect(left, up, right - left, down - up);
 	img(rect).copyTo(dst);
 	Size dsize = Size(50, 50);

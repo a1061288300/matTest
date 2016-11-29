@@ -66,6 +66,9 @@
     <ClInclude Include="match.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="matchFun.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

@@ -8,6 +8,12 @@
 #include <io.h>
 #include <stdlib.h>
 #include <map>
+#include <math.h>
+
+#ifndef _MATCH_H_
+#define _MATCH_H_
+#endif
+
 using namespace std;
 using namespace cv;
 
@@ -15,7 +21,8 @@ using namespace cv;
 map<char, double> matchImform;
 map<char, double> WtoHArr;
 const int total = 2500;
-
+char* modePreName = "E:\\graduationDesign\\font\\ArialNarrow\\*.*";
+char* matchPreName = "E:\\graduationDesign\\image\\275\\";
 
 void getModeNorNameArr(char* modePreName, string modeNorNameArr[], string modeImformNameArr[])//获取XXnor.txt 与 XXimform.txt
 {
@@ -134,6 +141,9 @@ void getWtoHArr(wordImformation word, string matchName, string modeName)//得到宽
 	else
 	{
 		WtoHArr[char(k)] = whscale / modeWHscale;
+		//WtoHArr[char(k)] = 0;
+		//cout << whscale << "\t" << modeWHscale << "\t";
+		//cout << WtoHArr[char(k)] << endl;
 	}
 
 }
@@ -185,4 +195,86 @@ void getMatchArr(string matchName, string modeName)//得到像素匹配相似度
 	matchIn.close();
 	modeIn.close();
 	
+}
+
+int modehorizon[50] = { 0 };
+int modevertical[50] = { 0 };
+int matchhorizon[50] = { 0 };
+int matchvertical[50] = { 0 };
+map<char, double> matchHVImform;
+void getMatchHorVerArr(string matchName)
+{
+	for (int i = 0; i < 50; i++)
+	{
+		matchhorizon[i] = 0;
+		matchvertical[i] = 0;
+	}
+
+	ifstream matchIn(matchName);
+	if (!matchIn.is_open())
+	{
+		cout << "打开模板文件失败" << endl;
+	}
+
+	char matchline[50];
+	for (int j = 0; j < 50; j++)
+	{
+		matchIn.getline(matchline, 51);
+		int len = strlen(matchline);
+		int count1 = 0;
+		for (int k = 0; k < len; k++)
+		{
+			matchvertical[k] += matchline[k] - '0';
+			count1 += matchline[k] - '0';
+		}
+		matchhorizon[j] = count1;
+	}
+	matchIn.close();
+}
+
+void getModeHorVerArr(string modeName)//获取模板中每行每列的像素信息 的 匹配程度
+{
+		for (int j = 0; j < 50; j++)
+		{
+			modehorizon[j] = 0;
+			modevertical[j] = 0;
+		}
+
+		ifstream modeIn(modeName);
+		if (!modeIn.is_open())
+		{
+			cout << "打开模板文件失败" << endl;
+		}
+
+		char modeline[50];
+		for (int j = 0; j < 50; j++)
+		{
+			modeIn.getline(modeline, 51);
+			int len = strlen(modeline);
+			int count = 0;
+			for (int k = 0; k < len; k++)
+			{
+				modevertical[k] += modeline[k] - '0';
+				count += modeline[k] - '0';
+			}
+			modehorizon[j] = count;
+
+		}
+
+		modeIn.close();
+
+}
+
+double getHVArr(int modehorizon[], int modevertical[], int matchhorizon[], int matchvertical[])
+{
+	double sumV = 0, sumH = 0;
+	for (int i = 0; i < 50; i++)
+	{
+		sumH += (modehorizon[i] - matchhorizon[i]) * (modehorizon[i] - matchhorizon[i]);
+		sumV += (modevertical[i] - matchvertical[i]) * (modevertical[i] - matchvertical[i]);
+	}
+	double res = 0.0;
+	res = 1 - (sumV / 10000 + sumH / 10000) / 2;
+	//cout << "res: " << res << endl;
+	return res;
 }

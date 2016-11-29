@@ -92,6 +92,7 @@
     <ClInclude Include="horizonCut.h" />
     <ClInclude Include="makeFont.h" />
     <ClInclude Include="match.h" />
+    <ClInclude Include="matchFun.h" />
     <ClInclude Include="mess.h" />
     <ClInclude Include="nameFunc.h" />
     <ClInclude Include="pixelToTxt.h" />

@@ -79,7 +79,7 @@ Mat getMouseRoi(Mat& image, string nameStr)
 Mat& getRoi(Mat& image, string nameStr)
 {
 	Mat Dst;
-	rect = Rect(43, 52, 509, 247);
+	rect = Rect(43, 52, 509, 237);
 	rectangle(src, Point(43, 52), Point(552, 299), Scalar(0), 1, 1, 0);
 	image(rect).copyTo(dst);
 	//imshow("roi", dst);

@@ -10,9 +10,11 @@ using namespace cv;
 
 Mat resizeImage(Mat& imageRead, string nameStr)
 {
-	double scaleCols, scaleRows;
-	scaleCols = 600 / (double)imageRead.cols;
-	scaleRows = 600 / (double)imageRead.rows;
+	double scaleCols = 1.0, scaleRows = 1.0;
+	if (imageRead.cols >= 600)
+		scaleCols = 600 / (double)imageRead.cols;
+	if (imageRead.rows >= 600)
+		scaleRows = 600 / (double)imageRead.rows;
 	Size dsize = Size(imageRead.cols * scaleCols, imageRead.rows * scaleRows);
 	Mat imageRead2 = Mat(dsize, CV_32S);
 	resize(imageRead, imageRead2, dsize);

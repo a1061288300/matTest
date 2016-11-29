@@ -6,6 +6,11 @@
 #include <string.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <fstream>
+
+#ifndef _CUTTEST_H_
+#define _CUTTEST_H_
+#endif
+
 using namespace std;
 using namespace cv;
 
@@ -223,7 +228,7 @@ void getVerticalCutLineNum(Mat& image, Mat& label, int line_up, int line_down)//
 	int nc = image.cols * image.channels();
 
 	
-	int markArr[900] = { 0 };//标记数组，用来标记该列是否有超过一个联通标记的值 得到数组后遍历  如果值大于99999 则说明该列有至少两个不同联通区域的点
+	int markArr[900] = { 0 };//标记数组，用来标记该行投影是否存在两个不同的连通区域
 	for (int i = line_up; i <= line_down; i++)
 	{
 		int* mark = label.ptr<int>(i);
@@ -260,7 +265,7 @@ void getVerticalCutLineNum(Mat& image, Mat& label, int line_up, int line_down)//
 			tmpNum++;
 		}
 
-		/*if (markArr[j - 1] != markArr[j] && markArr[j - 1] != 0 && markArr[j] != 0)
+		if (markArr[j - 1] != markArr[j] && markArr[j - 1] != 0 && markArr[j] != 0)
 		{
 			gVerticalCutNum[tmpNum] = j - 1;
 			//cout << "right:" << j << endl;
@@ -268,7 +273,7 @@ void getVerticalCutLineNum(Mat& image, Mat& label, int line_up, int line_down)//
 			gVerticalCutNum[tmpNum] = j;
 			//cout << "left:" << j << endl;
 			tmpNum++;
-		}*/
+		}
 	}
 
 	//std::cout << "getVerticalCutLineNum" << endl;
@@ -302,10 +307,14 @@ wordImformation* initWord(Mat& image, Mat& label, wordImformation words[])//对wo
 					words[wordsNum].left_line = gVerticalCutNum[j];
 					words[wordsNum].right_line = gVerticalCutNum[j + 1];
 					words[wordsNum].line_num = (line_up + 2) / 2;
-
+					
+					if (words[wordsNum].right_line == words[wordsNum].left_line)
+					{
+						words[wordsNum].right_line++;
+					}
 					//以下对字符进行压缩
 					
-
+					
 					int tmp_horizon_up = 0;
 					int tmp_horizon_down = 0;
 					tmp_horizon_up = words[wordsNum].up_line;
@@ -342,7 +351,7 @@ wordImformation* initWord(Mat& image, Mat& label, wordImformation words[])//对wo
 						else
 							break;
 					}
-
+					
 					//cout << "tmp_horizon_down" << tmp_horizon_down << endl;
 					words[wordsNum].up_line = tmp_horizon_up;
 					words[wordsNum].down_line = tmp_horizon_down;
@@ -453,9 +462,9 @@ wordImformation* getWordImformation(Mat& image, wordImformation words[])//注意要
 			}
 		}
 	}
-	imshow("sds", image);
+	//imshow("sds", image);
 	waitKey(0);
-	imwrite("E:\\graduationDesign\\image\\275\\275markmark.jpg", image);
+	//imwrite("E:\\graduationDesign\\image\\275\\275markmark.jpg", image);
 	//std::cout << "getWordImformation down!" << endl;
 	return words;
 }

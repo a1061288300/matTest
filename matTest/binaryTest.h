@@ -116,7 +116,7 @@ Mat getBinaryImage(Mat& imageRead, string nameStr)//进行二值化
 		}
 	}
 
-	for (int i = 0; i < nl; i++)
+	/*for (int i = 0; i < nl; i++)
 	{
 		uchar* data = imageRead.ptr<uchar>(i);
 		for (int j = 0; j < nc; j++)
@@ -124,7 +124,7 @@ Mat getBinaryImage(Mat& imageRead, string nameStr)//进行二值化
 			if (data[j] != 0)
 				data[j] = 255;
 		}
-	}
+	}*/
 
 	string add_str = "binary.jpg";
 	string res = getPicName(nameStr, add_str, 4);

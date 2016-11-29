@@ -221,15 +221,22 @@ Mat getBestAngleImg(Mat& img, string nameStr)
 	int emptyLineArr[30] = { 0 };
 	Mat tmpImg = img;
 	int tmp = 0;
-	for (float i = -3.0f; i <= 3.0f; i += 0.25f)
+	float finAngle = 0.0;
+	for (float i = -2.0f; i <= 2.0f; i += 0.25f)
 	{
 		tmpImg = imgRotatTwo(img, i * 3.1415926 / 180.0f);
 		emptyLineArr[tmp] = getEmptyLine(tmpImg);
-		//cout << emptyLineArr[tmp] << endl;
+		
+		if (emptyLineArr[tmp] < emptyLineArr[tmp - 1] && emptyLineArr[tmp - 1] > emptyLineArr[tmp - 2])
+		{
+			finAngle = i;
+			break;
+		}
+
 		tmp++;
 	}
 	
-	int lineMax = 0;
+	/*int lineMax = 0;
 	int flagAngle = 0;
 	for (int i = 0; i < tmp; i++)
 	{
@@ -239,9 +246,9 @@ Mat getBestAngleImg(Mat& img, string nameStr)
 			lineMax = emptyLineArr[i];
 			flagAngle = i;
 		}
-	}
+	}*/
 
-	float finAngle = -3.0f + 0.25f * flagAngle;
+	//float finAngle = -2.0f + 0.25f * flagAngle;
 	tmpImg = imgRotatTwo(img, finAngle * 3.1415926 / 180.0f);
 	//smooth(tmpImg);
 	//cout << flagAngle << " " << lineMax << endl;
