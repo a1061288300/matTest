@@ -20,7 +20,7 @@ using namespace cv;
 
 map<char, double> matchImform;
 map<char, double> WtoHArr;
-const int total = 2500;
+const int total = 100;
 char* modePreName = "E:\\graduationDesign\\font\\ArialNarrow\\*.*";
 char* matchPreName = "E:\\graduationDesign\\image\\275\\";
 
@@ -140,8 +140,8 @@ void getWtoHArr(wordImformation word, string matchName, string modeName)//得到宽
 		WtoHArr[char(k)] = 0;
 	else
 	{
-		WtoHArr[char(k)] = whscale / modeWHscale;
-		//WtoHArr[char(k)] = 0;
+		//WtoHArr[char(k)] = whscale / modeWHscale;
+		WtoHArr[char(k)] = 0;
 		//cout << whscale << "\t" << modeWHscale << "\t";
 		//cout << WtoHArr[char(k)] << endl;
 	}
@@ -173,10 +173,10 @@ void getMatchArr(string matchName, string modeName)//得到像素匹配相似度
 
 	int count = 0;
 
-	for (int i = 0; i < 50; i++)
+	for (int i = 0; i < 10; i++)
 	{
-		matchIn.getline(bematch, 100);
-		modeIn.getline(mode, 100);
+		matchIn.getline(bematch, 11);
+		modeIn.getline(mode, 11);
 		int len = strlen(bematch);
 		for (int j = 0; j < len; j++)
 		{
@@ -197,14 +197,14 @@ void getMatchArr(string matchName, string modeName)//得到像素匹配相似度
 	
 }
 
-int modehorizon[50] = { 0 };
-int modevertical[50] = { 0 };
-int matchhorizon[50] = { 0 };
-int matchvertical[50] = { 0 };
+int modehorizon[10] = { 0 };
+int modevertical[10] = { 0 };
+int matchhorizon[10] = { 0 };
+int matchvertical[10] = { 0 };
 map<char, double> matchHVImform;
 void getMatchHorVerArr(string matchName)
 {
-	for (int i = 0; i < 50; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		matchhorizon[i] = 0;
 		matchvertical[i] = 0;
@@ -216,10 +216,10 @@ void getMatchHorVerArr(string matchName)
 		cout << "打开模板文件失败" << endl;
 	}
 
-	char matchline[50];
-	for (int j = 0; j < 50; j++)
+	char matchline[10];
+	for (int j = 0; j < 10; j++)
 	{
-		matchIn.getline(matchline, 51);
+		matchIn.getline(matchline, 11);
 		int len = strlen(matchline);
 		int count1 = 0;
 		for (int k = 0; k < len; k++)
@@ -234,7 +234,7 @@ void getMatchHorVerArr(string matchName)
 
 void getModeHorVerArr(string modeName)//获取模板中每行每列的像素信息 的 匹配程度
 {
-		for (int j = 0; j < 50; j++)
+		for (int j = 0; j < 10; j++)
 		{
 			modehorizon[j] = 0;
 			modevertical[j] = 0;
@@ -246,10 +246,10 @@ void getModeHorVerArr(string modeName)//获取模板中每行每列的像素信息 的 匹配程度
 			cout << "打开模板文件失败" << endl;
 		}
 
-		char modeline[50];
-		for (int j = 0; j < 50; j++)
+		char modeline[10];
+		for (int j = 0; j < 10; j++)
 		{
-			modeIn.getline(modeline, 51);
+			modeIn.getline(modeline, 11);
 			int len = strlen(modeline);
 			int count = 0;
 			for (int k = 0; k < len; k++)
@@ -268,13 +268,13 @@ void getModeHorVerArr(string modeName)//获取模板中每行每列的像素信息 的 匹配程度
 double getHVArr(int modehorizon[], int modevertical[], int matchhorizon[], int matchvertical[])
 {
 	double sumV = 0, sumH = 0;
-	for (int i = 0; i < 50; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		sumH += (modehorizon[i] - matchhorizon[i]) * (modehorizon[i] - matchhorizon[i]);
 		sumV += (modevertical[i] - matchvertical[i]) * (modevertical[i] - matchvertical[i]);
 	}
 	double res = 0.0;
-	res = 1 - (sumV / 10000 + sumH / 10000) / 2;
+	res = 1 - (sumV / 400 + sumH / 400) / 2;
 	//cout << "res: " << res << endl;
 	return res;
 }

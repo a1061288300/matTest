@@ -37,7 +37,7 @@ void pixelMatch(map<char, double>WtoHArr, string modeNorNameArr[], string matchN
 {
 	for (int i = 0; i < wordsNum; i++)
 	{
-		if ((i >= 25 && i <= 34) || (i >= 44 && i <= 45) || (i >= 69 && i <= 73) || (i >= 77 && i <= 83) || (i >= 91 && i <= 94) || (i >= 100 && i <= 110))
+		if ((i >= 25 && i <= 34) || (i >= 69 && i <= 73) || (i >= 76 && i <= 83) || (i >= 91 && i <= 94) || (i >= 100 && i <= 110))
 		for (int j = 0; modeNorNameArr[j] != ""; j++)
 		{
 			getMatchArr(matchNameArr[i], modeNorNameArr[j]);

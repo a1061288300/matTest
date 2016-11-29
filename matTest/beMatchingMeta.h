@@ -13,7 +13,7 @@ void getMatchWordTxt(Mat& img, int up, int down, int left, int right, string nam
 	Mat dst;
 	rect = Rect(left, up, right - left, down - up);
 	img(rect).copyTo(dst);
-	Size dsize = Size(50, 50);
+	Size dsize = Size(10, 10);
 	Mat dst2 = Mat(dsize, CV_32S);
 	resize(dst, dst2, dsize);
 

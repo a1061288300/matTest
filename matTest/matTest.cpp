@@ -52,7 +52,7 @@ int main()
 	wordImformation words[1000];
 	getWordImformation(imageRead6, words);
 	
-	for (int k = 0; k < wordsNum; k++)//将分割出来的字符以50 * 50的01矩阵存在txt中
+	for (int k = 0; k < wordsNum; k++)//将分割出来的字符以10 * 10的01矩阵存在txt中
 	{
 		string preName = "E:\\graduationDesign\\image\\275\\";
 		string pretmp;
@@ -83,6 +83,14 @@ int main()
 	getModeNorNameArr(modePreName, modeNorNameArr, modeImformNameArr);
 	getMatchNameArr(matchPreName, matchNameArr);
 	
+	/*for (int i = 0; modeNorNameArr[i] != ""; i++)//获得模板
+	{
+		string name = modeNorNameArr[i].substr(0, modeNorNameArr[i].length() - 7);
+		string imgName = name + ".jpg";
+		Mat img = imread(imgName);
+		getNormalTxt(img, name);
+	}*/
+
 	for (int i = 0; i < wordsNum; i++)
 	{
 		
@@ -94,7 +102,7 @@ int main()
 
 	pixelMatch(WtoHArr, modeNorNameArr, matchNameArr, modeImformNameArr);
 	//horizonVertical(modeNorNameArr);
-
+	
 	finish = clock();
 	cout << "time:" << finish - start << "ms" << endl;
 	system("pause");

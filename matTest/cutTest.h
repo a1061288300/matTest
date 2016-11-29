@@ -440,7 +440,7 @@ wordImformation* getWordImformation(Mat& image, wordImformation words[])//注意要
 	//imshow("label", label);
 	//getPixelTxt(label);
 	initWord(split, label, words);
-	for (int i = 0; i < wordsNum; i++)
+	/*for (int i = 0; i < wordsNum; i++)
 	{
 		//std::cout << i << endl;
 		//std::cout << "up_line:" << words[i].up_line << "\t" << "down_line:" << words[i].down_line << endl;
@@ -461,7 +461,7 @@ wordImformation* getWordImformation(Mat& image, wordImformation words[])//注意要
 					data[q] = 0;
 			}
 		}
-	}
+	}*/
 	//imshow("sds", image);
 	waitKey(0);
 	//imwrite("E:\\graduationDesign\\image\\275\\275markmark.jpg", image);
